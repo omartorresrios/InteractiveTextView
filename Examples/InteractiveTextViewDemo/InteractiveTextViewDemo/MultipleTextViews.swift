@@ -58,7 +58,6 @@ Mars weather varies, but expect around -80°F (-62°C) near the equator, with du
 struct MultipleTextViews: View {
 	@State private var highlightedText: String = ""
 	@State private var buttonPosition: CGPoint = .zero
-	@State private var height: CGFloat = 0
 	@State private var heights: [String: CGFloat] = [:]
 	@Environment(\.colorScheme) var colorScheme
 	
@@ -71,34 +70,30 @@ struct MultipleTextViews: View {
 	}
 	
 	var body: some View {
-		GeometryReader { geometry in
-			VStack {
-				ScrollView {
-					LazyVStack(alignment: .center, spacing: 8) {
-						ForEach(messages, id: \.self) { message in
-							InteractiveTextView(
-								height: Binding(
-									get: { heights[message, default: 50] },
-									set: { heights[message] = $0 }
-								),
-								highlightedText: $highlightedText,
-								buttonPosition: $buttonPosition,
-								text: message,
-								width: width
-							)
-							.frame(minHeight: heights[message, default: 50])
-							.frame(maxWidth: width, alignment: .center)
-							.padding(.vertical)
-							.background(backgroundColor)
-							.cornerRadius(8)
-						}
-					}
+		ScrollView {
+			LazyVStack(alignment: .center, spacing: 8) {
+				ForEach(messages, id: \.self) { message in
+					InteractiveTextView(
+						height: Binding(
+							get: { heights[message, default: 50] },
+							set: { heights[message] = $0 }
+						),
+						highlightedText: $highlightedText,
+						buttonPosition: $buttonPosition,
+						text: message,
+						width: width
+					)
+					.frame(minHeight: heights[message, default: 50])
+					.frame(maxWidth: width, alignment: .center)
+					.padding(.vertical)
+					.background(backgroundColor)
+					.cornerRadius(8)
 				}
-				.frame(width: width)
-				.padding()
-				.frame(maxWidth: .infinity)
 			}
 		}
+		.frame(width: width)
+		.padding()
+		.frame(maxWidth: .infinity)
 	}
 }
 

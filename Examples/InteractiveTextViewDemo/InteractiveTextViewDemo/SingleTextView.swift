@@ -110,7 +110,6 @@ The script connects to Gmail, retrieves unread emails, extracts their content, a
 struct SingleTextView: View {
 	@State private var markdownText = markdownSample
 	@State private var highlightedText: String = ""
-	@State private var buttonPosition: CGPoint = .zero
 	@State private var height: CGFloat = 0
 	
 	private var width: CGFloat {
@@ -121,7 +120,6 @@ struct SingleTextView: View {
 		VStack {
 			InteractiveTextView(height: $height,
 								highlightedText: $highlightedText,
-								buttonPosition: $buttonPosition,
 								text: markdownText,
 								buttonText: "Explain",
 								width: width,

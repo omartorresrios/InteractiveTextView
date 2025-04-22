@@ -57,7 +57,6 @@ Mars weather varies, but expect around -80°F (-62°C) near the equator, with du
 
 struct MultipleTextViews: View {
 	@State private var highlightedText: String = ""
-	@State private var buttonPosition: CGPoint = .zero
 	@State private var heights: [String: CGFloat] = [:]
 	@Environment(\.colorScheme) var colorScheme
 	
@@ -79,7 +78,6 @@ struct MultipleTextViews: View {
 							set: { heights[message] = $0 }
 						),
 						highlightedText: $highlightedText,
-						buttonPosition: $buttonPosition,
 						text: message,
 						buttonText: "Explain",
 						width: width,

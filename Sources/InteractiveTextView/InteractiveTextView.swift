@@ -13,7 +13,6 @@ import SwiftUI
 public struct InteractiveTextView: NSViewRepresentable {
 	@Binding public var height: CGFloat
 	@Binding public var highlightedText: String
-	@Binding public var buttonPosition: CGPoint
 	public let text: String
 	public let buttonText: String
 	public var width: CGFloat
@@ -27,7 +26,6 @@ public struct InteractiveTextView: NSViewRepresentable {
 	public init(
 		height: Binding<CGFloat>,
 		highlightedText: Binding<String>,
-		buttonPosition: Binding<CGPoint>,
 		text: String,
 		buttonText: String,
 		width: CGFloat,
@@ -35,7 +33,6 @@ public struct InteractiveTextView: NSViewRepresentable {
 	) {
 		self._height = height
 		self._highlightedText = highlightedText
-		self._buttonPosition = buttonPosition
 		self.text = text
 		self.buttonText = buttonText
 		self.width = width
@@ -104,7 +101,6 @@ public struct InteractiveTextView: NSViewRepresentable {
 						}
 						
 						self.parent.highlightedText = selectedText
-						self.parent.buttonPosition = buttonPosition
 					} else {
 						self.parent.highlightedText = ""
 						self.actionableButton?.isHidden = true

@@ -20,11 +20,11 @@ Add `InteractiveTextView` to your project using Swift Package Manager.
 ## Usage
 ### Use Case: Single standalone TextView
 Here’s how to use `InteractiveTextView` in your SwiftUI app:
-<img width="596" alt="Screenshot 2025-04-21 at 4 39 37 PM" src="https://github.com/user-attachments/assets/6f2b223d-e9ba-4264-87c0-2168cc26e7c4" />
+<img width="969" alt="Screenshot 2025-04-21 at 11 03 50 PM" src="https://github.com/user-attachments/assets/cd954796-ef04-43c7-af6d-e1a284cbd37d" />
 
 ### Use Case: Chat Interface
 For a chat-like interface with multiple messages, you can use `InteractiveTextView` inside a `ScrollView`:
-<img width="628" alt="Screenshot 2025-04-21 at 4 48 18 PM" src="https://github.com/user-attachments/assets/e100fef3-b78d-4596-9cb5-5ec8248580b5" />
+<img width="777" alt="Screenshot 2025-04-21 at 11 04 45 PM" src="https://github.com/user-attachments/assets/311b8693-9ec0-4d51-85c1-a506ddd72b52" />
 
 ## Demos
 You can look at the demos inside the Example folder and start tinkering! Here are some screenshots:
@@ -61,7 +61,7 @@ One of the coolest features is that you can highlight text, retrieve its value, 
 
 ## What's coming
 There are a lot of cool stuff I want to add, such as:
-- Customize the button (text, colors).
+- Customize the actionable button (font, text color, backgrond color).
 - Custom fonts, text and background colors.
 - Create some default palette colors.
 - Expand/collapse `InteractiveTextView`

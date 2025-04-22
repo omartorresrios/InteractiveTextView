@@ -37,6 +37,18 @@ internal struct ThemeColors {
 		static let textDarkForegroundColor = NSColor(Color(hex: "f9f8f6e6")!)
 		static let defaultCodeDarkTextColor = NSColor(Color(hex: "abb2bf")!)
 	}
+	
+	static func actionableButtonBackgroundColor(isDarkMode: Bool) -> Color {
+		isDarkMode ? Color(hex: "1a1b1e")! : Color(hex: "FFFFFF")!
+	}
+	
+	static func actionableButtonTextColor(isDarkMode: Bool) -> Color {
+		isDarkMode ? Color(hex: "f9f8f6e6")! : Color(hex: "0A0A0A")!
+	}
+	
+	static func actionableButtonBorderColor(isDarkMode: Bool) -> NSColor {
+		isDarkMode ? NSColor.white : NSColor.black
+	}
 }
 
 internal struct Fonts {

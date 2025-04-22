@@ -15,7 +15,9 @@ public struct InteractiveTextView: NSViewRepresentable {
 	@Binding public var highlightedText: String
 	@Binding public var buttonPosition: CGPoint
 	public let text: String
+	public let buttonText: String
 	public var width: CGFloat
+	public var onButtonAction: (String) -> Void
 	@Environment(\.colorScheme) var colorScheme
 	
 	private var isDarkMode: Bool {
@@ -27,19 +29,24 @@ public struct InteractiveTextView: NSViewRepresentable {
 		highlightedText: Binding<String>,
 		buttonPosition: Binding<CGPoint>,
 		text: String,
-		width: CGFloat
+		buttonText: String,
+		width: CGFloat,
+		onButtonAction: @escaping (String) -> Void
 	) {
 		self._height = height
 		self._highlightedText = highlightedText
 		self._buttonPosition = buttonPosition
 		self.text = text
+		self.buttonText = buttonText
 		self.width = width
+		self.onButtonAction = onButtonAction
 	}
 	
 	public class Coordinator: NSObject, NSTextViewDelegate {
 		var parent: InteractiveTextView
 		var textViewBlockTypes: [NSTextView: MarkdownBlockType]
 		var previousText: String
+		var actionableButton: NSButton?
 		
 		enum MarkdownBlockType {
 			case text
@@ -52,6 +59,10 @@ public struct InteractiveTextView: NSViewRepresentable {
 			self.textViewBlockTypes = [:]
 		}
 		
+		@objc func actionableButtonTapped(_ sender: NSButton) {
+			parent.onButtonAction(parent.highlightedText)
+		}
+		
 		public func textViewDidChangeSelection(_ notification: Notification) {
 			guard let textView = notification.object as? NSTextView else { return }
 			
@@ -62,23 +73,45 @@ public struct InteractiveTextView: NSViewRepresentable {
 					let selectedText = (textView.string as NSString).substring(with: selectedRange).trimmingCharacters(in: .whitespacesAndNewlines)
 					guard !selectedText.isEmpty else {
 						self.parent.highlightedText = ""
+						self.actionableButton?.isHidden = true
 						return
 					}
 					
 					if let layoutManager = textView.layoutManager,
-					   let textContainer = textView.textContainer {
-						let glyphRange = layoutManager.glyphRange(forCharacterRange: selectedRange, 
-																  actualCharacterRange: nil)
-						let boundingRect = layoutManager.boundingRect(forGlyphRange: glyphRange, 
-																	  in: textContainer)
+					   let textContainer = textView.textContainer,
+					   let scrollView = textView.enclosingScrollView {
+						let glyphRange = layoutManager.glyphRange(forCharacterRange: selectedRange, actualCharacterRange: nil)
+						let boundingRect = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
+						
+						guard !boundingRect.isEmpty else {
+							self.parent.highlightedText = ""
+							self.actionableButton?.isHidden = true
+							return
+						}
+						
 						let containerOrigin = textView.textContainerOrigin
+						let textViewRect = NSOffsetRect(boundingRect, containerOrigin.x, containerOrigin.y)
+						
+						let contentViewRect = textView.convert(textViewRect, to: scrollView.contentView)
+						
+						let buttonX = contentViewRect.maxX + 5
+						let buttonY = contentViewRect.minY
+						let buttonPosition = NSPoint(x: buttonX, y: buttonY)
+						
+						if let button = self.actionableButton {
+							button.frame.origin = buttonPosition
+							button.isHidden = false
+						}
 						
 						self.parent.highlightedText = selectedText
-						self.parent.buttonPosition = CGPoint(x: containerOrigin.x + boundingRect.maxX,
-															 y: containerOrigin.y + boundingRect.minY)
+						self.parent.buttonPosition = buttonPosition
+					} else {
+						self.parent.highlightedText = ""
+						self.actionableButton?.isHidden = true
 					}
 				} else {
 					self.parent.highlightedText = ""
+					self.actionableButton?.isHidden = true
 				}
 			}
 		}
@@ -118,6 +151,10 @@ public struct InteractiveTextView: NSViewRepresentable {
 			stackView.widthAnchor.constraint(equalToConstant: width - 2 * padding)
 		])
 		
+		let actionableButton = actionableButton(coordinator: context.coordinator)
+		scrollView.contentView.addSubview(actionableButton)
+		context.coordinator.actionableButton = actionableButton
+		
 		updateStackView(stackView, with: text, coordinator: context.coordinator)
 		
 		return scrollView
@@ -147,6 +184,36 @@ public struct InteractiveTextView: NSViewRepresentable {
 			
 			scrollView.layoutSubtreeIfNeeded()
 		}
+	}
+	
+	private func actionableButton(coordinator: Coordinator) -> NSButton {
+		let button = NSButton(title: buttonText,
+							  target: coordinator,
+							  action: #selector(Coordinator.actionableButtonTapped))
+		button.wantsLayer = true
+		let backgroundColor = ThemeColors.actionableButtonBackgroundColor(isDarkMode: isDarkMode)
+		button.layer?.backgroundColor = backgroundColor.cgColor
+		button.layer?.cornerRadius = 8
+		button.layer?.borderWidth = 1
+		button.layer?.borderColor = ThemeColors.actionableButtonBorderColor(isDarkMode: isDarkMode).cgColor
+		button.isBordered = false
+		button.isTransparent = false
+		
+		let titleAttributes: [NSAttributedString.Key: Any] = [
+			.foregroundColor: NSColor(ThemeColors.actionableButtonTextColor(isDarkMode: isDarkMode)),
+			.font: Fonts.textFont!
+		]
+		let attributedTitle = NSAttributedString(string: buttonText, attributes: titleAttributes)
+		button.attributedTitle = attributedTitle
+		
+		button.sizeToFit()
+		let buttonPadding: CGFloat = 8
+		let buttonWidth = button.frame.width + buttonPadding * 1.5
+		let buttonHeight = button.frame.height + buttonPadding * 1.5
+		button.frame.size = NSSize(width: buttonWidth, height: buttonHeight)
+		button.alignment = .center
+		button.isHidden = true
+		return button
 	}
 	
 	// MARK: - Stack View Updates

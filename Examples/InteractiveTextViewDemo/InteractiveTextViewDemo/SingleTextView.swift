@@ -118,42 +118,21 @@ struct SingleTextView: View {
 	}
 	
     var body: some View {
-		ZStack {
-			VStack {
-				InteractiveTextView(height: $height,
-									highlightedText: $highlightedText,
-									buttonPosition: $buttonPosition,
-									text: markdownText,
-									width: width)
-				.frame(maxWidth: width, maxHeight: height)
-				.padding(.vertical)
-				.cornerRadius(8)
-			}
-			if !highlightedText.isEmpty {
-				AIExplainButton
-			}
+		VStack {
+			InteractiveTextView(height: $height,
+								highlightedText: $highlightedText,
+								buttonPosition: $buttonPosition,
+								text: markdownText,
+								buttonText: "Explain",
+								width: width,
+								onButtonAction: { selectedText in
+									print("Do something here with the selected text: \(selectedText)")
+								})
+			.frame(maxWidth: width, maxHeight: height)
+			.padding(.vertical)
+			.cornerRadius(8)
 		}
     }
-	
-	private var AIExplainButton: some View {
-		VStack {
-			Button("Explain") {
-				
-			}
-			.buttonStyle(.plain)
-			.frame(minWidth: 0, maxWidth: .infinity)
-			.padding(8)
-			.font(.custom("OpenSans-Regular", size: 14))
-			.background(.indigo)
-			.clipShape(RoundedRectangle(cornerRadius: 8.0))
-			.overlay(RoundedRectangle(cornerRadius: 8.0).stroke(.white, lineWidth: 0.5))
-		}
-		.fixedSize()
-		.padding(8)
-		.clipShape(RoundedRectangle(cornerRadius: 8.0))
-		.shadow(radius: 5)
-		.position(buttonPosition)
-	}
 }
 
 #Preview {

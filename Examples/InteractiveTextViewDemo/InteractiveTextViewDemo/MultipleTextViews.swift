@@ -81,7 +81,11 @@ struct MultipleTextViews: View {
 						highlightedText: $highlightedText,
 						buttonPosition: $buttonPosition,
 						text: message,
-						width: width
+						buttonText: "Explain",
+						width: width,
+						onButtonAction: { selectedText in
+							print("Do something here with the selected text: \(selectedText)")
+						}
 					)
 					.frame(minHeight: heights[message, default: 50])
 					.frame(maxWidth: width, alignment: .center)

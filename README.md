@@ -1,3 +1,6 @@
+![Swift](https://img.shields.io/badge/Swift-5.5-orange)
+![macOS](https://img.shields.io/badge/macOS-12.0+-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 # InteractiveTextView
 
 A SwiftUI view for macOS that renders markdown text with selectable text blocks. Built for displaying markdown content with interactive features, such as highlighting selected text and positioning an actionable button at the selection's bounding rectangle.
